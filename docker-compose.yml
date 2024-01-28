@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  api:
+    # image: maks/hs-service
+    build:
+      dockerfile: Dockerfile
+      context: .
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: 'postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}'
+      NODE_ENV: development
+      PORT: 3000
+    ports:
+      - '8080:3000'
+
+  postgres:
+    image: postgres:14.10
+    ports:
+      - '35000:${POSTGRES_DB_PORT}'
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+#
+#   pgadmin:
+#     container_name: pgadmin4_container
+#     image: dpage/pgadmin4:7
+#     restart: always
+#     environment:
+#       PGADMIN_DEFAULT_EMAIL: admin@admin.com
+#       PGADMIN_DEFAULT_PASSWORD: root
+#     ports:
+#       - "5050:80"
+#     volumes:
+#       - pgadmin-data:/var/lib/pgadmin
+
+# volumes:
+#   pgadmin-data:
