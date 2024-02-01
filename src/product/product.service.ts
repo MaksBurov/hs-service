@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductEntity } from './product.entity';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { UserEntity } from 'src/user/user.entity';
 import { CreateProductDto } from './dto/creacteProduct.dto';
 import {
@@ -9,6 +9,7 @@ import {
   ProductsResponseInterface,
 } from './types/productResponse.interface';
 import slugify from 'slugify';
+import { FindByIdsDto } from './dto/findByIds.dto';
 
 @Injectable()
 export class ProductService {
@@ -19,6 +20,12 @@ export class ProductService {
 
   async findAll(): Promise<ProductEntity[]> {
     return await this.productRepository.find();
+  }
+
+  async findByIds(FindByIdsDto: FindByIdsDto): Promise<ProductEntity[]> {
+    return await this.productRepository.findBy({
+      id: In(FindByIdsDto.ids),
+    });
   }
 
   async createProduct(
