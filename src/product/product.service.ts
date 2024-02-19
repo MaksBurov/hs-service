@@ -10,12 +10,15 @@ import {
 } from './types/productResponse.interface';
 import slugify from 'slugify';
 import { FindByIdsDto } from './dto/findByIds.dto';
+import { CheckouProductsDto } from './dto/checkoutProducts.dto';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class ProductService {
   constructor(
     @InjectRepository(ProductEntity)
     private readonly productRepository: Repository<ProductEntity>,
+    private readonly mailerService: MailerService,
   ) {}
 
   async findAll(): Promise<ProductEntity[]> {
@@ -59,5 +62,22 @@ export class ProductService {
       '-' +
       ((Math.random() * Math.pow(36, 6)) | 0).toString(36)
     );
+  }
+
+  async checkoutProducts(CheckouProductsDto: CheckouProductsDto): Promise<any> {
+    await this.mailerService.sendMail({
+      to: process.env.MAIL_FROM,
+      from: 'Мыло ручной работы <handmade-soap@internet.ru>',
+      subject: 'Заказ на мыло',
+      text: 'test',
+      html: `
+        <div>ФИО: ${CheckouProductsDto.name}</div><br />
+        <div>Email: ${CheckouProductsDto.email}</div><br />
+        <div>Телефон: ${CheckouProductsDto.phone}</div><br />
+        <div>Адрес: ${CheckouProductsDto.address}</div><br />
+        <div>Комментарий: ${CheckouProductsDto.comment}</div><br />
+        <div>Ids: ${CheckouProductsDto.products}</div><br />
+      `,
+    });
   }
 }

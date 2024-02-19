@@ -9,6 +9,7 @@ import {
   ProductResponseInterface,
   ProductsResponseInterface,
 } from './types/productResponse.interface';
+import { CheckouProductsDto } from './dto/checkoutProducts.dto';
 
 @Controller('products')
 export class ProductController {
@@ -42,5 +43,14 @@ export class ProductController {
     const products = await this.productSercive.findByIds(findByIdsDto);
 
     return this.productSercive.buildProductsResponse(products);
+  }
+
+  @Post('/checkout')
+  async checkoutProducts(
+    @Body() checkoutProductsDto: CheckouProductsDto,
+  ): Promise<any> {
+    await this.productSercive.checkoutProducts(checkoutProductsDto);
+
+    return 'ok';
   }
 }
